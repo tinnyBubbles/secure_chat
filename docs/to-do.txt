@@ -1,4 +1,6 @@
-Look into class methods for encrypt and decrypt as alternative constructors for constructing an encrypting instance vs a decrypting instance.
+"This is a simple list of tasks/bugs/issues that need to be 
+completed or addressed. They are in no order."
+
 Create server script
 Create client script
 Create tests
