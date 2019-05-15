@@ -1,6 +1,6 @@
 import unittest
 from encrypt import FernetEncryption as FE
-
+from cryptography.fernet import Fernet
 
 """
 -test the FernetEncryption class
@@ -15,7 +15,7 @@ class test_FernetEncryption(unittest.TestCase):
     def setUp(self):
         self.key = Fernet.generate_key()
 
-        self.fernet_object = FE(key)
+        self.fernet_object = FE(self.key)
 
         self.msg = b"This is a test message!@#"
 
@@ -27,12 +27,6 @@ class test_FernetEncryption(unittest.TestCase):
 
          self.assertNotEqual(self.msg, self.cipher_txt)
          self.assertEqual(self.msg, self.msg2)
-         
-
-    def tearDown(self):
-        self.fernet_object.dispose()
-        self.key.dispose()
-        self.msg.dispose()
 
 
 if __name__ == '__main__':
