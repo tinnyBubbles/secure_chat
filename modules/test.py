@@ -2,16 +2,16 @@ import unittest
 from encrypt import FernetEncryption as FE
 from cryptography.fernet import Fernet
 
-"""
--test the FernetEncryption class
-    -methods
-        -encrypt_message must return c off P
-        -decrypt_message must take c and get P
-    -FernetEncryption 
-        -check that object initializes with fernet key
-"""
 
 class test_FernetEncryption(unittest.TestCase):
+    """
+    The test case for the FernetEncryption module
+    This case tests to see that the FernetEncryption object 
+    can encrypt and decrypt a string using the same Fernet key.
+    
+    """
+
+
     def setUp(self):
         self.key = Fernet.generate_key()
 
