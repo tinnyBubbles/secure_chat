@@ -16,11 +16,10 @@ class FernetEncryption:
         self.key = k
         self.f = Fernet(self.key)
 
-    @staticmethod
-    def encrypt_message(P):
+
+    def encrypt_message(self, P):
         return self.f.encrypt(P) 
     
 
-    @staticmethod
-    def decrypt_message(C):
+    def decrypt_message(self, C):
         return self.f.decrypt(C)
