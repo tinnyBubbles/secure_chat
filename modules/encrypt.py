@@ -7,9 +7,9 @@
 from cryptography.fernet import Fernet 
 
 
-class FernetEncryption(self, k):
+class FernetEncryption:
     
-    def init(self)
+    def __init__(self, k):
         self.f = Fernet(k)
 
 
