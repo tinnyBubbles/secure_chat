@@ -1,0 +1,8 @@
+Look into class methods for encrypt and decrypt as alternative constructors for constructing an encrypting instance vs a decrypting instance.
+Create server script
+Create client script
+Create tests
+Determine how to securely transmit symmetrical keys
+Create client gui
+Calculate how large of a message can be transmitted 
+Be able to send pictures or videos
