@@ -4,7 +4,6 @@ completed or addressed. They are in no order."
 Create server script
 Create client script
 Create tests
-Determine how to securely transmit symmetrical keys
 Create client gui
 Calculate how large of a message can be transmitted 
 Be able to send pictures or videos
