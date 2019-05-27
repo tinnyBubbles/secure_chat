@@ -1,12 +1,9 @@
-#!/usr/bin/python3.6
-
 import socket
 
-HOST = '127.0.0.1'
-PORT = 65432
+PORT = 6543
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-	s.bind((HOST, PORT))
+	s.bind((socket.gethostname(), PORT))
 	s.listen()
 	conn, addr = s.accept()
 	with conn:
