@@ -56,8 +56,7 @@ while True:
 
             clients[client_socket] = user
 
-            print(f"Accepted new connection from {client_addr[0]}:{client_addr[1]} username:{user['data'].decode('utf-8')}")
-
+            print("Accepted new connection from:" + client_addr)
         else:
             message = receive_message(notified_socket)
 
