@@ -1,3 +1,22 @@
+"""
+    Objects:
+        Read socket
+        Write socket
+        Selector for monitoring socket object events
+    Functions:
+        Create socket
+        Read from a socket
+        Write to a socket
+        Log actions and errors
+    Containers:
+        HEADER_LENGTH
+        IP_ADDR
+        PORT
+        Client_Dictionary
+        SocketsReadyToWrite
+        SocketsReadyToRead
+"""
+
 import socket
 import select
 
