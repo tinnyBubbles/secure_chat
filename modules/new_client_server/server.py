@@ -43,7 +43,7 @@ def receive_message(client_socket):
 
 #Begin reading incoming connections and messages
 while True:
-    read_sockets, _, exception_sockets = select.select(sockets_list, [], error_sockets)
+    read_sockets, _, _ = select.select(sockets_list, [], [])
 
     for notified_socket in read_sockets:
         if notified_socket == server_socket:
@@ -71,4 +71,4 @@ while True:
 
             for client_socket in clients:
                 if client_socket != notified_socket:
-                    client_socket.send(user['header'] + user['data'])
+                    client_socket.send(user['header'] + user['data'] + message['data'])
