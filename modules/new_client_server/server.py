@@ -27,12 +27,13 @@
         return server_socketObj
     
     def receive_message(socketObj)
-        receive header
-        receive message
-        return dict[header, message]
+        message_header = socketObj.recv(HEADER_LENGTH)
+        message_length = int(message_header.decode("UTF-8").split())
+        message_data = socketObj.recv(message_length)
+        return dict[message_header, message_data]
 
     def send_message(socketObj, header, message)
-        
+       socketObj.sendall(header + message) 
 
     def log_conversation(dict[client:message])    
         pass
@@ -46,23 +47,16 @@
         Accept incoming connection
         Register client_twin_sockObj read, write events to selectorObj
         Create client_twin_sockObj: addr mapping
-    LOOP:
+
+    While True:
         Build list of read, write and error sockets
-        for socket in sockets_ready_to_read
-            if server_socket
-                Accept incoming connections
-                    Register read events of the client_twin_sockObj with the selectorObj
-                    Store client_twin_sockObj in dictionary, mapped to its addr
-                    Send"Connected ..." message to client
+        for socket in sockets_ready_to_be_read
+            receive_message(socket) --> message
+            if no message
+                continue
             else
-                Read message header --> message_length
-                Read message
-                if no message
-                    continue
-                else
-                    Map message header to message
-                    for socket in sockets_ready_to_write
-                        send message header + message
+                for socket in sockets_ready_to_write:
+                    send_message(socket, message)
        for socket in sockets_with_errors:
            close socket connection
 """
