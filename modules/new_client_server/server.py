@@ -42,6 +42,10 @@
     
     Make the socket listen for up to 2 connections
 
+    While total_connections < 2:
+        Accept incoming connection
+        Register client_twin_sockObj read, write events to selectorObj
+        Create client_twin_sockObj: addr mapping
     LOOP:
         Build list of read, write and error sockets
         for socket in sockets_ready_to_read
