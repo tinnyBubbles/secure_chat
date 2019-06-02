@@ -1,7 +1,7 @@
 """
     Objects:
-        Read socket
-        Write socket
+        server_socket
+        client_socket_twin
         Selector for monitoring socket object events
     Functions:
         Create socket
@@ -12,9 +12,55 @@
         HEADER_LENGTH
         IP_ADDR
         PORT
-        Client_Dictionary
-        SocketsReadyToWrite
-        SocketsReadyToRead
+        sockets_ready_to_read
+        sockets_ready_to_write
+        sockets_with_errors
+        
+    
+    Class Server_Socket:
+        def constructor(self, IP, PORT, selector)
+            Create a server_socketObj
+            Set the socket's blocking attribute to flase
+            Set the socket's options to allow for reuse
+            Register read_event with selectorObj
+            Bind to IP and PORT
+        return server_socketObj
+    
+    def receive_message(socketObj)
+        receive header
+        receive message
+        return dict[header, message]
+
+    def send_message(socketObj, header, message)
+        
+
+    def log_conversation(dict[client:message])    
+        pass
+
+    Build a selectorObj
+    Build server_socketObj(IP, PORT, selector)
+    
+    Make the socket listen for up to 2 connections
+
+    LOOP:
+        Build list of read, write and error sockets
+        for socket in sockets_ready_to_read
+            if server_socket
+                Accept incoming connections
+                    Register read events of the client_twin_sockObj with the selectorObj
+                    Store client_twin_sockObj in dictionary, mapped to its addr
+                    Send"Connected ..." message to client
+            else
+                Read message header --> message_length
+                Read message
+                if no message
+                    continue
+                else
+                    Map message header to message
+                    for socket in sockets_ready_to_write
+                        send message header + message
+       for socket in sockets_with_errors:
+           close socket connection
 """
 
 import socket
