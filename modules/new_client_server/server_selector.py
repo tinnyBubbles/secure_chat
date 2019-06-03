@@ -12,9 +12,9 @@ error_sockets = []
 clients = {}
 
 def receive_message(socketObj):
-    message_header = socketObj.recv(HEADER_LENGTH)
-    message_length = int(message_header.decode("UTF-8"))
-    message_data = socketObj.recv(message_length)
+    message_header = int(socketObj.recv(HEADER_LENGTH).decode("UTF-8"))
+    message_data = socketObj.recv(message_header)
+    message = (message_header, message_data)
     return message(message_header, message_data)
 
 
