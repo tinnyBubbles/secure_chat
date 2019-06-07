@@ -11,9 +11,9 @@ Clients = {}
 
 def receive_message(socketObj):
     message_header = socketObj.recv(HEADER_LENGTH)
-    message_length = int(message_header.decode("UTF-8").strip())
+    message_length = message_header.decode("UTF-8")
 
-    message_data = socketObj.recv(message_length)
+    message_data = socketObj.recv(int(message_length))
 
     key = ClientKey(message_length, message_data)
 
@@ -34,7 +34,11 @@ server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_sock.bind((IP_ADDR, PORT))
 server_sock.listen(2)
 
-while len(Clients) < 2:
+#Entering this loop because I only want 2 clients to be able to connect
+#I also don't want to read or write to sockets until 2 and only 2 clients
+#have been connected.
+
+while len(Clients) < 2: 
     conn, addr = server_sock.accept()
     Clients.update({conn: addr})
 
