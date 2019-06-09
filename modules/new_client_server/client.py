@@ -31,3 +31,31 @@ Loop
         decrypt data
         display data
 """
+
+import socket
+import encrypt as e
+
+class client:
+    def __init__(self):
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+
+    def send(self):
+        pass
+
+
+    def read(self):
+        pass
+
+
+    def connect(self):
+        pass
+
+
+    def encrypt(self):
+        pass
+
+
+    def decrypt(self):
+        pass
+
