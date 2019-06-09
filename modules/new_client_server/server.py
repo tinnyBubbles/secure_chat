@@ -7,21 +7,17 @@ IP_ADDR = "127.0.0.1"
 PORT = 1234
 
 ClientKey = namedtuple('ClientKey', ['msgLength', 'msgData'])
-Clients = {}
+clients = {}
 
-def receive_message(socketObj):
-    message_header = socketObj.recv(HEADER_LENGTH)
-    message_length = message_header.decode("UTF-8")
+def receive_message(client_conn):
 
-    message_data = socketObj.recv(int(message_length))
-
-    key = ClientKey(message_length, message_data)
-
-    return key
+    message_data = client_conn.recv(2000)
+    
+    return message_data
 
 
-def send_message(socketObj, msgHeader, msgData):
-    socketObj.sendall(msgHeader + message_data)
+def send_message(client_conn, message):
+    client_conn.sendall(message)
 
 
 def record_conv(clients):
@@ -40,20 +36,20 @@ server_sock.listen(2)
 
 while len(Clients) < 2: 
     conn, addr = server_sock.accept()
-    Clients.update({conn: addr})
+    clients.update({conn: addr})
 
     sel.register(conn, selectors.EVENT_READ, receive_message)
 
 while True:
     read_sockets = sel.select()
-    for key, event in read_sockets:
-        read_msg = key.data
-        sock = key.fileobj
-        clientKey = read_msg(sock)
-        for client in Clients:
-            if client == sock:
+    for ready_socket in read_sockets:
+        read_msg = ready_socket.data
+        sock = ready_socket.fileobj
+        message = receive_message(sock)
+        for client in clients:
+            if client[client_conn] == sock:
                 continue
             else:
-                send_message(client, clientKey.message_length, clientKey.message_data)  
+                send_message(client, message)  
 
 
