@@ -33,7 +33,7 @@ server_sock.listen(2)
 #I also don't want to read or write to sockets until 2 and only 2 clients
 #have been connected.
 
-while len(Clients) < 2: 
+while len(clients) < 2: 
     conn, addr = server_sock.accept()
     clients.update({conn: addr})
 
@@ -46,7 +46,7 @@ while True:
         sock = ready_socket.fileobj
         message = receive_message(sock)
         for client in clients:
-            if client[client_conn] == sock:
+            if client == sock:
                 continue
             else:
                 send_message(client, message)  
