@@ -6,7 +6,6 @@ HEADER_LENGTH = 10
 IP_ADDR = "127.0.0.1"
 PORT = 1234
 
-ClientKey = namedtuple('ClientKey', ['msgLength', 'msgData'])
 clients = {}
 
 def receive_message(client_conn):
