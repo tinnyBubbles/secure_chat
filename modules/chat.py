@@ -2,54 +2,72 @@ import socket
 from multiprocessing import Process
 import sys
 
-host = ('127.0.0.1', 1234)
-client = ('127.0.0.1', 1234)
+#HOST = ('127.0.0.1', 1234)
+#SERVER = ('127.0.0.1', 1234)
 
+HOST_IP = '127.0.0.1'
+SERVER_IP = '127.0.0.1'
 
+HOST_PORT = 1235
+SERVER_PORT = 1235
 
 
 class Chat:
-    class ProcessWrapper:
-        def __init__(self, function):
-            self.function = function
-        
-        def __call__(self, *arguments, **kwargs):
-            self.p = Process(target=self.function, args=arguments)
-            self.p.start()
-            self.p.join()
-            self.p.terminate()
+    class Decorators:
+        @classmethod
+        def processwrapper(funcInstance, function):
+            def wrapper(*arguments):
+                p = Process(target=function, args=arguments) 
+                p.start()
+
+            return wrapper
 
 
-    def __init__(self, chat_host, chat_client):
-        self.ip, self.port = chat_host
-        self.chat_client = chat_client
+    def __init__(self, host_ip, server_ip, host_port, server_port):
+        self.host_ip = host_ip
+        self.server_ip = server_ip
+
+        self.host_port = host_port
+        self.server_port = server_port
+
+        self.has_connection = False
         self.is_connected = False
         
-        self.chat_client = chat_client
+        self.sock = socket.socket()
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.sock.setblocking(False)
 
-       
-    @ProcessWrapper
-    def attempt_connection(self, client):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.setblocking(False)
-        s.connect(client)
-        s.close()
+
+    def connect(self):
+        while self.is_connected == False and self.has_connection == False:
+            self.get_connection(self.host_ip, self.host_port)
+            self.attempt_connection()
         return True
-    
-    
-    @ProcessWrapper
-    def get_connection(ip, port):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.setblocking(False)
-        s.bind((ip, port))
-        s.listen()
-        conn, addr = s.accept()
 
-        s.close()
-        return conn
+    #@Decorators.processwrapper    
+    def attempt_connection(self):
+        #adjust to keep trying to connect until connection is success
+        #self.s_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #s.setblocking(False)
+        self.sock.connect((self.server_ip, self.server_port))
+        
+        self.is_connected = True
+    
+    #@Decorators.processwrapper 
+    def get_connection(self, host_ip, host_port):
+        #s_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    
+        self.sock.bind((host_ip, host_port))
+        self.sock.listen(1)
+        conn, client_addr = self.sock.accept()
+        self.connection = conn
+        self.client_addr = client_addr
+    
+        
+        self.has_connection = True
 
-    @ProcessWrapper
-    def send_loop(conn, sock1, sock2):
+    
+    def send_loop(self):
         '''
         Loop that takes input from user and
         writes that to the connection object representing the 
@@ -59,52 +77,28 @@ class Chat:
             message = input('-->')
             if message == '__exit':
                 print('Closing connection and exiting the program...')
-
-                sock1.flush()
-                sock1.close()
-                sock2.flush()
-                sock2.close()
-
+                self.connection.close()
                 sys.exit()
             if message == '':
                 continue
             else:
-                conn.sendall(message.encode('UTF-8'))
+                self.connection.sendall(message.encode('UTF-8'))
             
 
-    @ProcessWrapper
-    def read_loop(conn):
+    def read_loop(self):
         '''
         Loop that reads from the connection and
         displays the output for the user.
         '''
         while True:
-            incoming_message = conn.recv(2000)
+            incoming_message = self.connection.recv(2000)
             if incoming_message == '':
                 continue
             else:
-                return incoming_message
-    
+                print(str(incoming_message.decode('UTF-8')))
+    def run_on_process(self, processObj, method):
+        pass
 
-    def run(self):
-        response = input('Would you like to initiate a chat?[Y/N]')
-        
-        if response == 'Y':
-            conn = self.get_connection(self.ip, self.port)
-            while self.is_connected == False:
-                self.is_connected = self.attempt_connection(self.chat_client)
-
-            read_loop(conn)
-            send_loop(conn, self.s, self.s2)
-
-        if response == 'N':
-            print('Exiting')
-            sys.exit()
-
-        else:
-            print('Invalid response ... exiting')
-            sys.exit()
-        
     def encrypt(self):
         pass
 
@@ -113,7 +107,15 @@ class Chat:
         pass
 
 
-if __name__ == '__main__':
-    chat = Chat(host, client)
-    chat.run()
+def main():
+    chat = Chat(HOST_IP, SERVER_IP, HOST_PORT, SERVER_PORT)
     
+    p1 = Process(target=chat.connect)
+    p1.start()
+
+
+    chat.read_loop()
+    chat.send_loop()
+    
+if __name__ == '__main__':
+    main()
