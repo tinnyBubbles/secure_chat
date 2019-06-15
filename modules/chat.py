@@ -36,7 +36,7 @@ class Chat:
     def get_connection(self, s):
         self.server_sock.bind((self.host_ip, self.host_port))
         self.server_sock.listen(1)
-        conn, client_addr = self.sock.accept()
+        conn, client_addr = self.server_sock.accept()
         self.has_connection = True
         
         s.send(conn)
