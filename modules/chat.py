@@ -87,11 +87,13 @@ def main():
 
     chat = Chat(HOST_IP, SERVER_IP, HOST_PORT, SERVER_PORT)
     
-    attempt_connection = Process(target=chat.attempt_connection)
     get_connection = Process(target=chat.get_connection, args=(get_conn_sock, ))
-    attempt_connection.start()
+    
+    attempt_connection = Process(target=chat.attempt_connection)
+    
     get_connection.start()
-   
+    attempt_connection.start()
+       
 
     while chat.is_connected == False and chat.has_connection == False:
         continue
