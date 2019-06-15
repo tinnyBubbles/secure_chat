@@ -1,6 +1,5 @@
-import socket
-from multiprocessing import Process, Pipe
-import sys
+import socket, sys
+from multiprocessing import Process
 
 
 HOST_IP = '127.0.0.1'
@@ -23,6 +22,7 @@ class Chat:
         
         self.server_sock = socket.socket()
         self.client_sock = socket.socket()
+
         
     def attempt_connection(self):
         try:
@@ -32,14 +32,15 @@ class Chat:
 
         except Exception as e:
             print(e)
-     
-    def get_connection(self, s):
+    def get_connection(self):
         self.server_sock.bind((self.host_ip, self.host_port))
         self.server_sock.listen(1)
         conn, client_addr = self.server_sock.accept()
+
+        self.conn = conn
+
         self.has_connection = True
         
-        s.send(conn)
 
     def send_loop(self, connObj):
         '''
@@ -81,34 +82,38 @@ class Chat:
         pass
 
 
-def main():
+def process_wrapper(function):
+    def wrapper(*args):
+        p_function = Process(target=function, args=args)
+        p_function.start()
+    return wrapper
 
-    main_sock, get_conn_sock = Pipe(False)
 
-    chat = Chat(HOST_IP, SERVER_IP, HOST_PORT, SERVER_PORT)
-    
-    get_connection = Process(target=chat.get_connection, args=(get_conn_sock, ))
+@process_wrapper
+def connect(chat):
+    get_connection = Process(target=chat.get_connection)
     
     attempt_connection = Process(target=chat.attempt_connection)
     
+
     get_connection.start()
     attempt_connection.start()
-       
 
-    while chat.is_connected == False and chat.has_connection == False:
-        continue
-    
-    connObj = main_sock.recv(1024)
-
-    attempt_connection.terminate()
-    get_connection.terminate()
-
-    send_loop = Process(target=chat.send_loop, args=(connObj, ))
-    read_loop = Process(target=chat.read_loop, args=(connObj, ))
+@process_wrapper
+def read_and_write(chat, conn):
+    send_loop = Process(target=chat.send_loop, args=(conn, ))
+    read_loop = Process(target=chat.read_loop, args=(conn, ))
 
 
     send_loop.start()
     read_loop.start()
+
+
+def main():
+    chat = Chat(HOST_IP, SERVER_IP, HOST_PORT, SERVER_PORT)
     
+    connect(chat)
+
+  
 if __name__ == '__main__':
     main()
