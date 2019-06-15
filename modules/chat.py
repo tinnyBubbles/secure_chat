@@ -89,11 +89,13 @@ def main():
     
     attempt_connection = Process(target=chat.attempt_connection)
     get_connection = Process(target=chat.get_connection, args=(get_conn_sock, ))
+    attempt_connection.start()
+    get_connection.start()
+   
 
     while chat.is_connected == False and chat.has_connection == False:
-        attempt_connection.start()
-        get_connection.start()
-   
+        continue
+    
     connObj = main_sock.recv(1024)
 
     attempt_connection.terminate()
