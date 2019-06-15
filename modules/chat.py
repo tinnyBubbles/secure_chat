@@ -1,5 +1,5 @@
 import socket
-from multiprocessing import Process
+from multiprocessing import Process, Pipe
 import sys
 
 
@@ -33,13 +33,13 @@ class Chat:
         except:
             print("There was an issue connecting")
      
-    def get_connection(self):
+    def get_connection(self, s):
         self.server_sock.bind((self.host_ip, self.host_port))
         self.server_sock.listen(1)
         conn, client_addr = self.sock.accept()
         self.has_connection = True
-
-        return conn
+        
+        s.send(conn)
 
     def send_loop(self, connObj):
         '''
@@ -82,14 +82,29 @@ class Chat:
 
 
 def main():
+
+    main_sock, get_conn_sock = Pipe(False)
+
     chat = Chat(HOST_IP, SERVER_IP, HOST_PORT, SERVER_PORT)
     
-    p1 = Process(target=chat.connect)
-    p1.start()
+    attempt_connection = Process(target=chat.attempt_connection)
+    get_connection = Process(target=chat.get_connection, args=(get_conn_sock, ))
+
+    while chat.is_connected == False and chat.has_connection == False:
+        attempt_connection.start()
+        get_connection.start()
+   
+    connObj = main_sock.recv(1024)
+
+    attempt_connection.terminate()
+    get_connection.terminate()
+
+    send_loop = Process(target=chat.send_loop, args=(connObj, ))
+    read_loop = Process(target=chat.read_loop, args=(connObj, ))
 
 
-    chat.read_loop()
-    chat.send_loop()
+    send_loop.start()
+    read_loop.start()
     
 if __name__ == '__main__':
     main()
