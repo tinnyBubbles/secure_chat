@@ -24,14 +24,6 @@ class Chat:
         self.server_sock = socket.socket()
         self.client_sock = socket.socket()
         
-
-
-    def connect(self):
-        while self.is_connected == False and self.has_connection == False:
-            self.get_connection(self.host_ip, self.host_port)
-            self.attempt_connection()
-        return True
-
     def attempt_connection(self):
         try:
             self.client_sock.connect((self.server_ip, self.server_port))
