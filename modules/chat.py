@@ -30,8 +30,8 @@ class Chat:
             self.is_connected == True
             print("You are now connected...")
 
-        except:
-            print("There was an issue connecting")
+        except Exception as e:
+            print(e)
      
     def get_connection(self, s):
         self.server_sock.bind((self.host_ip, self.host_port))
