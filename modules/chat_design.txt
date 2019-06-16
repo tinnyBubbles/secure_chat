@@ -1,0 +1,50 @@
+chat.py allows for a peer to peer connection between clients.
+
+Constants:
+
+HOST_IP = '127.0.0.1'
+SERVER_IP = '127.0.0.1'
+
+HOST_PORT = 1235
+SERVER_PORT = 1235
+
+class chat.Chat:
+
+	self.host_ip - the host IPv4
+	self.server_ip - the client IPV4
+	self.host_port - the host port #
+	self.server_port - the client port #
+	self.has_connection=False - bool true if accept() returns a conn socket
+	self.is_connected=False - bool true if connect() was successful
+	self.sel - instance of selectors.DefaultSelectors 
+	self.server_sock - instance of socket.socket()
+	self.client_sock - instance of socket.socket()
+
+	self.attempt_connection() - attempts to make a connection then returns True if successful and False if not.
+		
+	self.get_connection() - listens for a connection then returns that connection socket or False if connect() was not successful.
+
+	self.receive() - receives a message from a connection socket. Returns that message.
+
+	self.send() - sends a message to a connection socket.
+
+main() - the main function of the program. Initializes a Chat object and makes calls to the other functions.
+
+connect() - calls get_connection and attempt_connection to run on seperate processes.
+
+read_and_write() - calls send() and read() to loop on seperate processes.
+
+process_decorator() - a wrapper function that runs the decorated function on its own process.
+
+
+chat.py Control Flow:
+
+if __name__ == '__main__':	
+	main()
+		connect()
+			get_connection.start()
+			attempt_connection.start()
+		read_and_write()
+			send.start()
+			read.start()
+		print("Chat has ended")
