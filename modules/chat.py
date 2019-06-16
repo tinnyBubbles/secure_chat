@@ -45,7 +45,7 @@ class Chat:
         self.server_sock.listen(1)
         self.conn, self.client_addr = self.server_sock.accept()
         
-        print(str(client_addr) + " " + "has now connected...")
+        print(str(self.client_addr) + " " + "has now connected...")
     
     def read(self):
         while True:
