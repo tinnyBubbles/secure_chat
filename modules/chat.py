@@ -43,49 +43,38 @@ class Chat:
     def get_connection(self):
         self.server_sock.bind((self.host_ip, self.host_port))
         self.server_sock.listen(1)
-        conn, client_addr = self.server_sock.accept()
+        self.conn, self.client_addr = self.server_sock.accept()
         
         print(str(client_addr) + " " + "has now connected...")
-        #self.conn = conn
-        
-        self.sel.register(conn, selectors.EVENT_READ)
-        self.sel.register(conn, selectors.EVENT_WRITE)
-        
-        event = sel.select()
-
-        #self.has_connection = True
-        #use selectors to listen for read and write events
-        #then take appropriate action with conn
-        """
-            -initialize with a selector object unique to instance
-            -register conn socket object returned by accept()
-            -wait for conn socket object to have either a read or a write event.
-            -if read event: then read and print to user
-            -if write event: then write to socket object
-            -repeat
-        """
-        
-        for key, mask in event:
-            if mask == 
+    
+    def read(self):
         while True:
-                message = input('-->')
-                if message == '__exit':
-                    print('Closing connection and exiting the program...')
-                    conn.close()
-                    sys.exit()
-                if message == '':
-                    continue
-                else:
-                    conn.sendall(message.encode('UTF-8'))
-                
-
-        while True:
-            incoming_message = connObj.recv(2000)
+            self.incoming_message = self.conn.recv(2000)
             if incoming_message == '':
                 continue
             else:
-                print(str(incoming_message.decode('UTF-8')))
+                print(str(self.incoming_message.decode('UTF-8')))
     
+    
+    def send(self):
+         while True:
+             self.message = input('-->')
+             if self.message == '__exit':
+                print('Closing connection and exiting the program...')
+                sys.exit()
+             if self.message == '':
+                continue
+             else:
+                self.client_sock.sendall(self.message.encode('UTF-8'))
+        
+        #self.sel.register(conn, selectors.EVENT_READ)
+        #self.sel.register(conn, selectors.EVENT_WRITE)
+        
+        #event = sel.select()
+
+        #self.has_connection = True
+        #use selectors to listen for read and write events
+   
     def encrypt(self):
         pass
 
@@ -122,9 +111,9 @@ def connect(chat):
     attempt_connection.start()
 
 @process_decorator(to_wait=True)
-def read_and_write(chat, conn):
-    send_loop = Process(target=chat.send_loop, args=(conn, ))
-    read_loop = Process(target=chat.read_loop, args=(conn, ))
+def read_and_write(chat):
+    send_loop = Process(target=chat.send)
+    read_loop = Process(target=chat.read)
 
 
     send_loop.start()
@@ -136,7 +125,7 @@ def main():
     
     connect(chat)
     
-    #read_and_write(chat, chat.conn)
+    read_and_write(chat)
 
     print(str(chat.has_connection))
     print(str(chat.is_connected)) 
