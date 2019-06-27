@@ -1,27 +1,20 @@
 import socket, sys
 from multiprocessing import Process
-from abc import ABC
 
 
-class Abstract_Chat(ABC):
-    @staticmethod
-    def send(sock, msg):
-        sock.send(msg.encode('UTF-8')
 
-
-    @staticmethod
-    def receive(sock):
-        msg = sock.recv(2000)
-        return msg.decode('UTF-8')
-
-class Client(Abstract_Chat):
-    def __init__(self, server_ip, server_port):
+class Chat:
+    def __init__(self, server_ip, server_port, host_ip, host_port):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                   
         self.server_ip = server_ip
         self.server_port = server_port
-        self.sock.settimeout(20)
 
+        self.host_ip = host_ip
+        self.host_port = host_port
+
+        self.sock.settimeout(20)
+    
     def connect(self):
         try:
             self.sock.connect((self.server_ip, self.server_port))
@@ -30,23 +23,28 @@ class Client(Abstract_Chat):
         except:
             print("Could not connect ...")
             return False
-        
-
-class Server(Abstract_Chat):
-    def __init__(self, sock, host_ip, host_port)
-        self.sock = sock
-        self.host_ip = host_ip
-        self.host_port = host_port
     
-
+    
     def accept_conn(self):
-        print("Listening ...")
-        self.sock.bind((self.host_ip, self.host_port))
-        self.sock.listen()
+        try:
+            print("Listening ...")
+            self.sock.bind((self.host_ip, self.host_port))
+            self.sock.listen()
+            return self.sock.accept()
+            print("Accepted a connection")
+            self.sock.close()
+        except:
+            print("Could not receive a connection ... exiting")
+            sys.exit()
 
-        return self.sock.accept()
-        print("Accepted a connection")
+
+    def send(msg, sock):
+        sock.send(msg.encode('UTF-8'))
         
+
+    def receive(sock):
+        incoming_msg = sock.recv(2000)
+        return incoming_msg.decode('UTF-8')
 
 class Logger:
     pass
