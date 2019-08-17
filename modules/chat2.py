@@ -47,7 +47,14 @@ class Chat:
         return incoming_msg.decode('UTF-8')
 
 class Logger:
-    pass
+    def __init__(self):
+        pass
+    def log_msg(self, msg):
+        pass
+    def log_connection(self, msg):
+        pass
+    def log_errors(self, e):
+        pass
 
 
 class Monitor:
